@@ -1,0 +1,43 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+Stage: devel
+
+%setup
+
+%files
+    key.txt /home/
+
+%environment
+
+%post
+    apt-get -y update
+	apt-get -y install \
+	build-essential \
+	wget \
+
+	conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch 
+	conda install jupyterlab matplotlib nbconvert
+    conda install -c conda-forge wandb
+    conda install ipywidgets tqdm
+
+    #So wandb key remains private, read from file that is gitignored and add to runtime environment variable.
+    source /home/key.txt || true
+    echo $WANDB_API_KEY || true
+    echo "export WANDB_API_KEY=\"${WANDB_API_KEY}\"" >> $SINGULARITY_ENVIRONMENT || true
+	
+
+%runscript
+	jupyter lab --ip='*' --port=8888 --no-browser --allow-root --notebook-dir=/home/
+    #exec /opt/conda/bin/jupyter lab  --ip='*' --port=8888 --no-browser --allow-root
+
+
+%labels
+    Author Jack Collins
+    Version v0.0.1
+
+%help
+    singularity run --nv -B .:/home/ --network-args "portmap=8888:8888/tcp" autoencoder.sif
+    This container is a a demo for use with PyTorch and Cuda. Please use the flag --nv
+    I'd suggest using the bind command to bind in the source code for building and 
+    using the bind command during executing to save data externally to the contaienr.
+	The container also contains Jupyterlab for development

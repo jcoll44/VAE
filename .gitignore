@@ -127,3 +127,16 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Singularity containers
+*.sif
+
+# Datasets too large to upload
+data/
+
+# Pytorch models and model weights
+*.pth
+
+# wandb directory and API key
+wandb/
+key.txt

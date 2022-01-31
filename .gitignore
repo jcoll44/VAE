@@ -139,4 +139,4 @@ data/
 
 # wandb directory and API key
 wandb/
-key.txt
+key.sh
